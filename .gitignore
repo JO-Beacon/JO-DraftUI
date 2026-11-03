@@ -1,0 +1,24 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+pubspec.lock
+*.iml
+
+# 示例
+example/.dart_tool/
+example/build/
+example/pubspec.lock
+
+# 平台生成
+windows/flutter/ephemeral/
+example/windows/flutter/ephemeral/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# 本地 AI 协作说明，不进仓库
+/AGENTS.md

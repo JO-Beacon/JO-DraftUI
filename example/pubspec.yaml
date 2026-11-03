@@ -1,0 +1,17 @@
+name: jo_draft_example
+description: JO-DraftUI 控件展厅
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  jo_draftui:
+    path: ../flutter
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
