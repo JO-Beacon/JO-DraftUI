@@ -36,6 +36,8 @@ class JoIcons {
 
   // —— 导航
   static const IconData arrowLeft = IconData(0xea60, fontFamily: _kFamily);
+  static const IconData undo = IconData(0xea58, fontFamily: _kFamily);
+  static const IconData redo = IconData(0xea5a, fontFamily: _kFamily);
   static const IconData history = IconData(0xee17, fontFamily: _kFamily);
   static const IconData links = IconData(0xeeb8, fontFamily: _kFamily);
 

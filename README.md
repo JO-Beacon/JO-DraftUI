@@ -21,6 +21,7 @@
 ```
 spec/       与实现无关：颜色、间距、形状、字体、状态（唯一事实来源）
 flutter/    Flutter 适配（Dart 包 jo_draftui）
+cpp/        C++ / Win32 / Direct2D 适配
 example/    展厅
 ```
 

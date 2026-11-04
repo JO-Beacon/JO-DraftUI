@@ -1,0 +1,5 @@
+#include "resource.h"
+
+IDC_PAN_MIDDLE_VERTICAL CURSOR "cursors/pan_middle_vertical.cur"
+IDC_PAN_NORTH CURSOR "cursors/pan_north.cur"
+IDC_PAN_SOUTH CURSOR "cursors/pan_south.cur"

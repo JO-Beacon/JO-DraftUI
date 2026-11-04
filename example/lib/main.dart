@@ -16,9 +16,15 @@ class GalleryApp extends StatelessWidget {
       builder: (context, child) => JoTheme(
         settings: const JoSettings(),
         palette: JoPalette.dark,
-        child: const ColoredBox(
-          color: Color(0xFF0E0F12),
-          child: Gallery(),
+        child: Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (_) => const ColoredBox(
+                color: Color(0xFF0E0F12),
+                child: Gallery(),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../tokens.dart';
@@ -35,6 +36,7 @@ class _JoMenuBarState extends State<JoMenuBar> {
   final List<GlobalKey> _keys = [];
   OverlayEntry? _entry;
   int? _open;
+  final FocusNode _focus = FocusNode();
 
   @override
   void initState() {
@@ -58,7 +60,28 @@ class _JoMenuBarState extends State<JoMenuBar> {
     // dispose 期间不能 setState，这里只收 OverlayEntry。
     _entry?.remove();
     _entry = null;
+    _focus.dispose();
     super.dispose();
+  }
+
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+
+    if (event.logicalKey == LogicalKeyboardKey.escape && _open != null) {
+      _close();
+      return KeyEventResult.handled;
+    }
+
+    if (_open != null && widget.menus.isNotEmpty) {
+      final int delta = event.logicalKey == LogicalKeyboardKey.arrowLeft
+          ? -1
+          : (event.logicalKey == LogicalKeyboardKey.arrowRight ? 1 : 0);
+      if (delta != 0) {
+        _toggle((_open! + delta + widget.menus.length) % widget.menus.length);
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
   }
 
   void _close() {
@@ -81,16 +104,14 @@ class _JoMenuBarState extends State<JoMenuBar> {
       anchor: box,
       width: 200,
       close: _close,
+      barrierTop: 30,
       child: JoPopupPanel(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             for (final item in widget.menus[index].items)
               if (item.divider)
-                Container(
-                  height: 1,
-                  color: JoTheme.of(context).border,
-                )
+                Container(height: 1, color: JoTheme.of(context).border)
               else
                 JoPopupRow(
                   label: item.label,
@@ -107,41 +128,70 @@ class _JoMenuBarState extends State<JoMenuBar> {
     );
     Overlay.of(context).insert(_entry!);
     setState(() => _open = index);
+    _focus.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
-    final JoPalette p = JoTheme.of(context);
-    return Container(
-      height: 30,
-      padding: const EdgeInsets.symmetric(horizontal: JoSpace.s2),
-      decoration: BoxDecoration(
-        border: Border(bottom: JoShape.side(p.border)),
-      ),
-      child: Row(
-        children: [
-          for (int i = 0; i < widget.menus.length; i++)
-            JoTap(
-              key: _keys[i],
-              onTap: () => _toggle(i),
-              opaque: false,
-              builder: (BuildContext context, bool hover, bool down) {
-                final bool lit = _open == i || hover;
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: JoSpace.s3),
-                  alignment: Alignment.center,
-                  color: lit ? p.text.withValues(alpha: _open == i ? 0.12 : 0.09) : null,
-                  child: Text(
-                    widget.menus[i].title,
-                    style: JoTheme.ui(context).copyWith(
-                      fontSize: 13,
-                      color: lit ? p.text : p.secondary,
-                    ),
-                  ),
-                );
-              },
-            ),
-        ],
+    final p = JoTheme.of(context);
+    return Focus(
+      focusNode: _focus,
+      onKeyEvent: _onKey,
+      child: Container(
+        height: 30,
+        padding: const EdgeInsets.symmetric(horizontal: JoSpace.s2),
+        decoration: BoxDecoration(
+          border: Border(bottom: JoShape.side(p.border)),
+        ),
+        child: MouseRegion(
+          onHover: (PointerHoverEvent event) {
+            if (_open == null) return;
+            for (int i = 0; i < _keys.length; i++) {
+              final RenderBox? box =
+                  _keys[i].currentContext?.findRenderObject() as RenderBox?;
+              if (box == null) continue;
+              final Rect rect = box.localToGlobal(Offset.zero) & box.size;
+              if (rect.contains(event.position) && _open != i) {
+                _toggle(i);
+                return;
+              }
+            }
+          },
+          child: Row(
+            children: [
+              for (int i = 0; i < widget.menus.length; i++)
+                JoTap(
+                  key: _keys[i],
+                  onTap: () => _toggle(i),
+                  opaque: false,
+                  builder: (BuildContext context, bool hover, bool down) {
+                    final bool lit = _open == i || hover;
+                    return MouseRegion(
+                      onEnter: (_) {
+                        if (_open != null && _open != i) _toggle(i);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: JoSpace.s3,
+                        ),
+                        alignment: Alignment.center,
+                        color: lit
+                            ? p.text.withValues(alpha: _open == i ? 0.12 : 0.09)
+                            : null,
+                        child: Text(
+                          widget.menus[i].title,
+                          style: JoTheme.ui(context).copyWith(
+                            fontSize: 13,
+                            color: lit ? p.text : p.secondary,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

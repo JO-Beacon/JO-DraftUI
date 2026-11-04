@@ -17,3 +17,13 @@ Copyright (C) 2026 JO-Beacon
   assets/fonts/NotoSansMono-VF.ttf
   许可：SIL Open Font License 1.1
   全文：assets/licenses/NotoSansMono-OFL-1.1.txt
+
+- markdown（Dart 包，BSD-3-Clause，Dart 项目作者）
+  仅 Flutter 适配使用；许可全文见 https://github.com/dart-lang/markdown/blob/master/LICENSE
+
+- url_launcher（Flutter 团队，BSD-3-Clause）
+  仅 Flutter 适配的 Markdown 链接使用
+
+- Chromium panning cursors（BSD-3-Clause，Copyright 2015 The Chromium Authors）
+  example/win32/cursors/pan_middle_vertical.cur、pan_north.cur、pan_south.cur
+  许可全文：example/win32/cursors/LICENSE-BSD-3-Clause.txt

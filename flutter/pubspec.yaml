@@ -10,6 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # 纯 Dart 的 Markdown 解析器（BSD-3，dart-lang）。
+  # 只有 Flutter 适配用；C++ 适配将来用自己的解析器（如 md4c），
+  # 排版规则见 spec/。
+  # Markdown 渲染（BSD-3，Flutter 团队）。内部用 Material 的文本组件，
+  # 但外观全部由本库样式表控制。
+  flutter_markdown_plus: ^1.0.12
+  markdown: ^7.3.1
+  # 打开 Markdown 里的链接（BSD-3，Flutter 团队）。
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:

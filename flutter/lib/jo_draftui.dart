@@ -6,14 +6,19 @@
 library;
 
 export 'src/icons.dart';
+export 'src/localization.dart';
 export 'src/tokens.dart';
 export 'src/widgets/buttons.dart';
 export 'src/widgets/dropdown.dart';
+export 'src/widgets/key_field.dart';
 export 'src/widgets/list_row.dart';
+export 'src/widgets/page_header.dart';
+export 'src/widgets/markdown.dart';
 export 'src/widgets/menu_bar.dart';
 export 'src/widgets/popup.dart' show JoPopupPanel, JoPopupRow;
 export 'src/widgets/section.dart';
 export 'src/widgets/splitter.dart';
 export 'src/widgets/status_bar.dart';
 export 'src/widgets/tap.dart';
+export 'src/widgets/text_input.dart';
 export 'src/widgets/tooltip.dart';

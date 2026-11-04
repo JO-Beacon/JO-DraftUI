@@ -21,6 +21,7 @@ Both share the same lines and spacing.
 ```
 spec/       Implementation-neutral: color, spacing, shape, type, states
 flutter/    Flutter binding (Dart package jo_draftui)
+cpp/        C++ / Win32 / Direct2D binding
 example/    Gallery
 ```
 
@@ -90,3 +91,12 @@ Apache License 2.0. See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 Icons are from Remix Icon (Remix Icon License v1.0); the full text is in
 `assets/licenses/RemixIcon-License-1.0.txt`.
+
+Build releases with `--no-tree-shake-icons`:
+
+```bash
+flutter build windows --release --no-tree-shake-icons
+```
+
+Otherwise Flutter's icon tree-shaking may drop glyphs that are passed through
+parameters, and they will render blank at runtime.

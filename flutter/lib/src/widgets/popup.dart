@@ -12,12 +12,17 @@ OverlayEntry buildJoPopup({
   required double width,
   required Widget child,
   required VoidCallback close,
+  double barrierTop = 0,
 }) {
   final Offset at = anchor.localToGlobal(Offset.zero);
   return OverlayEntry(
     builder: (BuildContext context) => Stack(
       children: [
-        Positioned.fill(
+        Positioned(
+          top: barrierTop,
+          left: 0,
+          right: 0,
+          bottom: 0,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: close,
