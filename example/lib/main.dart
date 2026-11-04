@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jo_draftui/jo_draftui.dart';
 
@@ -5,8 +6,35 @@ void main() {
   runApp(const GalleryApp());
 }
 
-class GalleryApp extends StatelessWidget {
+class GalleryApp extends StatefulWidget {
   const GalleryApp({super.key});
+
+  @override
+  State<GalleryApp> createState() => _GalleryAppState();
+}
+
+class _GalleryAppState extends State<GalleryApp> {
+  static const MethodChannel _windowChannel = MethodChannel('jodraft/window');
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _sendCaption());
+  }
+
+  Future<void> _sendCaption() async {
+    const p = JoPalette.dark;
+    try {
+      await _windowChannel.invokeMethod<void>('setCaption', <String, int>{
+        'caption': p.bg.toARGB32(),
+        'text': p.text.toARGB32(),
+        'border': p.border.toARGB32(),
+        'dark': 1,
+      });
+    } catch (_) {
+      // 非 Windows 或没有这条通道，忽略
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

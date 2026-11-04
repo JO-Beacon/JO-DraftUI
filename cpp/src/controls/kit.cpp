@@ -404,18 +404,86 @@ void paint_nav_category(Canvas& canvas, const Rect& rect,
               state.selected ? theme.palette.accent : theme.palette.secondary);
 }
 
+void paint_list_card(Canvas& canvas, const Rect& rect,
+                     std::wstring_view title, std::wstring_view subtitle,
+                     wchar_t glyph, const Theme& theme,
+                     const Interaction& state, bool selected) {
+    if (selected) {
+        canvas.fill_rect(rect, theme.palette.bg);
+        canvas.fill_rect(
+            Rect{rect.left, rect.top, rect.left + theme.px(2.0f), rect.bottom},
+            theme.palette.accent);
+    } else if (state.hover && state.enabled) {
+        canvas.fill_rect(rect, theme.hover_overlay());
+    }
+    const float icon_size = theme.px(16.0f);
+    const float icon_top = rect.top + theme.px(11.0f);
+    draw_icon(canvas,
+              Rect{rect.left + theme.px(16.0f), icon_top,
+                   rect.left + theme.px(16.0f) + icon_size,
+                   icon_top + icon_size},
+              glyph, icon_size,
+              selected ? theme.palette.accent : theme.palette.secondary);
+    const float left = rect.left + theme.px(44.0f);
+    const float right = rect.right - theme.px(16.0f);
+    draw_text(canvas, Rect{left, rect.top + theme.px(8.0f), right,
+                           rect.top + theme.px(28.0f)},
+              title, theme.px(14.0f),
+              selected ? theme.palette.accent : theme.palette.text);
+    if (!subtitle.empty()) {
+        draw_text(canvas, Rect{left, rect.top + theme.px(28.0f), right,
+                               rect.top + theme.px(46.0f)},
+                  subtitle, theme.px(11.0f), theme.palette.secondary);
+    }
+}
+
+void paint_result_row(Canvas& canvas, const Rect& rect,
+                      std::wstring_view title, std::wstring_view subtitle,
+                      std::wstring_view trailing, float trailing_width,
+                      const Theme& theme, bool trailing_right,
+                      float card_bottom_inset) {
+    paint_card(canvas,
+               Rect{rect.left, rect.top, rect.right,
+                    rect.bottom - theme.px(card_bottom_inset)},
+               theme);
+    const float left = rect.left + theme.px(16.0f);
+    const float trailing_left =
+        rect.right - theme.px(trailing_width) -
+        (trailing_right ? theme.px(16.0f) : 0.0f);
+    const float right = rect.right - theme.px(16.0f);
+    if (subtitle.empty()) {
+        draw_text(canvas, Rect{left, rect.top, trailing_left, rect.bottom},
+                  title, theme.px(13.0f), theme.palette.text);
+    } else {
+        draw_text(canvas,
+                  Rect{left, rect.top, trailing_left, rect.top + theme.px(24.0f)},
+                  title, theme.px(13.0f), theme.palette.text);
+        draw_text(canvas,
+                  Rect{left, rect.top + theme.px(22.0f), trailing_left,
+                       rect.top + theme.px(46.0f)},
+                  subtitle, theme.px(11.0f), theme.palette.secondary);
+    }
+    if (!trailing.empty()) {
+        draw_text(canvas, Rect{trailing_left, rect.top, right, rect.bottom},
+                  trailing, theme.px(11.0f), theme.palette.secondary,
+                  FontWeight::normal,
+                  trailing_right ? TextAlign::trailing : TextAlign::leading);
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Splitter
 // ---------------------------------------------------------------------------
 
 void paint_splitter(Canvas& canvas, const Rect& area,
                     const SplitterState& state, const Theme& theme) {
-    const float line_width = state.dragging || state.hover ? theme.px(2.0f)
-                                                           : theme.px(1.0f);
-    const float center = state.position + theme.px(5.0f);
+    const int line_width = static_cast<int>(
+        state.dragging || state.hover ? theme.px(2.0f) : theme.px(1.0f));
+    const int center = static_cast<int>(state.position + theme.px(5.0f));
     canvas.fill_rect(
-        Rect{center - line_width / 2.0f, area.top,
-             center + (line_width + 1.0f) / 2.0f, area.bottom},
+        Rect{static_cast<float>(center - line_width / 2), area.top,
+             static_cast<float>(center + (line_width + 1) / 2),
+             area.bottom},
         state.dragging || state.hover ? theme.palette.accent
                                       : theme.palette.border);
 }
@@ -453,21 +521,32 @@ ScrollbarGeometry paint_scrollbar(Canvas& canvas, const Rect& viewport,
     const float max_scroll = state.content_height - state.viewport_height;
     if (max_scroll <= 0.0f || viewport.height() <= 0.0f) return geometry;
 
-    geometry.track =
-        Rect{viewport.right - theme.px(14.0f), viewport.top,
-             viewport.right - theme.px(4.0f), viewport.bottom};
-    const float track_height = geometry.track.height();
-    float thumb_height =
-        std::max(theme.px(24.0f), track_height * track_height /
-                                      std::max(1.0f, track_height + max_scroll));
+    const int track_left =
+        static_cast<int>(std::lround(viewport.right - theme.px(14.0f)));
+    const int track_right =
+        static_cast<int>(std::lround(viewport.right - theme.px(4.0f)));
+    const int track_top = static_cast<int>(std::lround(viewport.top));
+    const int track_bottom = static_cast<int>(std::lround(viewport.bottom));
+    const int track_height = track_bottom - track_top;
+    const int max_scroll_i = std::max(0, static_cast<int>(std::lround(max_scroll)));
+    const int total = track_height + max_scroll_i;
+    int thumb_height =
+        std::max(static_cast<int>(std::lround(theme.px(24.0f))),
+                 track_height * track_height / std::max(1, total));
     thumb_height = std::min(thumb_height, track_height);
-    const float available = std::max(0.0f, track_height - thumb_height);
-    const float progress =
-        std::clamp(state.offset / max_scroll, 0.0f, 1.0f);
-    geometry.thumb =
-        Rect{geometry.track.left, geometry.track.top + available * progress,
-             geometry.track.right,
-             geometry.track.top + available * progress + thumb_height};
+    const int available = std::max(0, track_height - thumb_height);
+    const int offset = std::clamp(
+        static_cast<int>(std::lround(state.offset)), 0, max_scroll_i);
+    const int thumb_top =
+        track_top + available * offset / std::max(1, max_scroll_i);
+    geometry.track = Rect{static_cast<float>(track_left),
+                          static_cast<float>(track_top),
+                          static_cast<float>(track_right),
+                          static_cast<float>(track_bottom)};
+    geometry.thumb = Rect{static_cast<float>(track_left),
+                          static_cast<float>(thumb_top),
+                          static_cast<float>(track_right),
+                          static_cast<float>(thumb_top + thumb_height)};
     geometry.visible = true;
 
     canvas.fill_rect(geometry.track, theme.palette.surface);
@@ -847,7 +926,7 @@ FieldLayout layout_field(const Rect& row, const FieldSpec& spec,
     const float hint_height = theme.px(20.0f);
     const float block =
         spec.hint.empty() ? label_height : label_height + hint_height;
-    const float top = row.top + (row.height() - block) / 2.0f;
+    const float top = row.top + std::floor((row.height() - block) * 0.5f);
     layout.label = Rect{row.left + theme.px(16.0f), top,
                         row.right - theme.px(16.0f), top + label_height};
     if (!spec.hint.empty()) {

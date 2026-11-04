@@ -1,6 +1,7 @@
 #include "jo_draftui/controls/basic.hpp"
 
 #include <algorithm>
+#include <cmath>
 
 namespace jo::draftui {
 namespace {
@@ -116,12 +117,35 @@ void paint_list_row(Canvas& canvas, const Rect& rect, std::wstring_view title,
     }
 }
 
+void paint_page_header(Canvas& canvas, const Rect& area,
+                       std::wstring_view title, std::wstring_view subtitle,
+                       const Theme& theme) {
+    TextStyle title_style;
+    title_style.family = FontFamily::sans;
+    title_style.size = theme.px(20.0f);
+    title_style.color = theme.palette.text;
+    title_style.weight = FontWeight::bold;
+    canvas.draw_text(
+        Rect{area.left, theme.px(58.0f), area.right, theme.px(88.0f)},
+        title, title_style);
+    if (!subtitle.empty()) {
+        TextStyle subtitle_style;
+        subtitle_style.family = FontFamily::sans;
+        subtitle_style.size = theme.px(12.0f);
+        subtitle_style.color = theme.palette.secondary;
+        canvas.draw_text(
+            Rect{area.left, theme.px(90.0f), area.right, theme.px(112.0f)},
+            subtitle, subtitle_style);
+    }
+}
+
 void paint_section_header(Canvas& canvas, const Rect& rect,
                           std::wstring_view title, const Theme& theme) {
     TextStyle style;
     style.family = FontFamily::sans;
     style.size = theme.px(theme.type.meta_size);
     style.color = theme.palette.secondary;
+    style.center_vertical = true;
     canvas.draw_text(rect, title, style);
 }
 
@@ -129,21 +153,26 @@ void paint_field(Canvas& canvas, const Rect& rect, std::wstring_view label,
                  std::wstring_view hint, const Theme& theme) {
     const float left = rect.left + theme.px(tokens::s4);
     const float right = rect.right - theme.px(tokens::s4);
+    const float label_height = theme.px(24.0f);
+    const float hint_height = theme.px(20.0f);
+    const float block = hint.empty() ? label_height : label_height + hint_height;
+    const float top =
+        rect.top + std::floor((rect.height() - block) * 0.5f);
     TextStyle label_style;
     label_style.family = FontFamily::sans;
     label_style.size = theme.px(14.0f);
     label_style.color = theme.palette.text;
-    canvas.draw_text(Rect{left, rect.top + theme.px(tokens::s2), right,
-                          rect.top + theme.px(28.0f)},
-                     label, label_style);
+    label_style.center_vertical = true;
+    canvas.draw_text(Rect{left, top, right, top + label_height}, label,
+                     label_style);
 
     if (!hint.empty()) {
         TextStyle hint_style;
         hint_style.family = FontFamily::sans;
         hint_style.size = theme.px(theme.type.meta_size);
         hint_style.color = theme.palette.secondary;
-        canvas.draw_text(Rect{left, rect.top + theme.px(28.0f), right,
-                              rect.bottom - theme.px(tokens::s1)},
+        hint_style.center_vertical = true;
+        canvas.draw_text(Rect{left, top + label_height, right, top + block},
                          hint, hint_style);
     }
 }

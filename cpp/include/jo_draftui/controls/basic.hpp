@@ -34,6 +34,11 @@ void paint_list_row(Canvas& canvas, const Rect& rect, std::wstring_view title,
                     std::wstring_view subtitle, const Theme& theme,
                     const Interaction& state, bool selected = false);
 
+/// Page header: 20px title at 58 px and 12px subtitle at 90 px.
+void paint_page_header(Canvas& canvas, const Rect& area,
+                       std::wstring_view title, std::wstring_view subtitle,
+                       const Theme& theme);
+
 /// Section box: a small label above a surface panel with a 1px border.
 void paint_section_header(Canvas& canvas, const Rect& rect,
                           std::wstring_view title, const Theme& theme);

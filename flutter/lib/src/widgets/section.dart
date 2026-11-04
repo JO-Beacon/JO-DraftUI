@@ -19,13 +19,11 @@ class JoSegment<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final JoPalette p = JoTheme.of(context);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      spacing: JoSpace.s2,
+      runSpacing: JoSpace.s2,
       children: <Widget>[
-        for (int i = 0; i < options.length; i++) ...<Widget>[
-          if (i > 0) const SizedBox(width: JoSpace.s2),
-          _cell(p, options[i]),
-        ],
+        for (int i = 0; i < options.length; i++) _cell(p, options[i]),
       ],
     );
   }

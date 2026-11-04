@@ -87,6 +87,20 @@ void paint_nav_category(Canvas& canvas, const Rect& rect,
                         std::wstring_view label, const Theme& theme,
                         const NavState& state);
 
+/// A list card row with a leading icon, title and optional subtitle.
+void paint_list_card(Canvas& canvas, const Rect& rect,
+                     std::wstring_view title, std::wstring_view subtitle,
+                     wchar_t glyph, const Theme& theme,
+                     const Interaction& state, bool selected = false);
+
+/// A bordered result row with a title, optional subtitle and optional
+/// right-aligned trailing text. `trailing_width` is in logical pixels.
+void paint_result_row(Canvas& canvas, const Rect& rect,
+                      std::wstring_view title, std::wstring_view subtitle,
+                      std::wstring_view trailing, float trailing_width,
+                      const Theme& theme, bool trailing_right = true,
+                      float card_bottom_inset = 0.0f);
+
 // ---------------------------------------------------------------------------
 // Splitter
 // ---------------------------------------------------------------------------
