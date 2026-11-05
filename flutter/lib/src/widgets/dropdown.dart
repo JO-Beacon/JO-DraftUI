@@ -51,20 +51,25 @@ class _JoDropdownState<T> extends State<JoDropdown<T>> {
       width: box.size.width,
       close: _close,
       child: JoPopupPanel(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final item in widget.items)
-              JoPopupRow(
-                label: item.label,
-                dense: true,
-                selected: item.value == widget.value,
-                onTap: () {
-                  _close();
-                  widget.onChanged(item.value);
-                },
-              ),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 280),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final item in widget.items)
+                  JoPopupRow(
+                    label: item.label,
+                    dense: true,
+                    selected: item.value == widget.value,
+                    onTap: () {
+                      _close();
+                      widget.onChanged(item.value);
+                    },
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart' show SelectionChangedCause, TextSelectionToolbar;
 
 import '../tokens.dart';
@@ -26,6 +27,8 @@ class JoTextField extends StatefulWidget {
     this.minLines,
     this.focusNode,
     this.verticalPadding = 4,
+    this.inputFormatters,
+    this.keyboardType,
   });
 
   final TextEditingController controller;
@@ -42,6 +45,8 @@ class JoTextField extends StatefulWidget {
   final int? minLines;
   final FocusNode? focusNode;
   final double verticalPadding;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
 
   @override
   State<JoTextField> createState() => _JoTextFieldState();
@@ -121,6 +126,8 @@ class _JoTextFieldState extends State<JoTextField> {
         padding: EdgeInsets.symmetric(vertical: widget.verticalPadding),
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
+        inputFormatters: widget.inputFormatters,
+        keyboardType: widget.keyboardType,
         contextMenuBuilder: (BuildContext c, EditableTextState st) =>
             _toolbar(st, p),
       ),
@@ -315,6 +322,8 @@ class JoTextInput extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.height = 30,
+    this.inputFormatters,
+    this.keyboardType,
   });
 
   final TextEditingController? controller;
@@ -323,6 +332,8 @@ class JoTextInput extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final double height;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
 
   @override
   State<JoTextInput> createState() => _JoTextInputState();
@@ -387,6 +398,7 @@ class _JoTextInputState extends State<JoTextInput> {
         ),
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
+        inputFormatters: widget.inputFormatters,
         verticalPadding: 0,
       ),
     );

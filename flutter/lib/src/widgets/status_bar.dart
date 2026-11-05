@@ -24,6 +24,7 @@ class JoStatusBar extends StatelessWidget {
       height: 26,
       padding: const EdgeInsets.symmetric(horizontal: JoSpace.s3),
       decoration: BoxDecoration(
+        color: p.surface,
         border: Border(top: JoShape.side(p.border)),
       ),
       child: Row(

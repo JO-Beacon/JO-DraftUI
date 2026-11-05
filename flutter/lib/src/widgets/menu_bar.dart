@@ -141,6 +141,7 @@ class _JoMenuBarState extends State<JoMenuBar> {
         height: 30,
         padding: const EdgeInsets.symmetric(horizontal: JoSpace.s2),
         decoration: BoxDecoration(
+          color: p.surface,
           border: Border(bottom: JoShape.side(p.border)),
         ),
         child: MouseRegion(

@@ -12,6 +12,7 @@ export 'src/widgets/buttons.dart';
 export 'src/widgets/dropdown.dart';
 export 'src/widgets/key_field.dart';
 export 'src/widgets/list_row.dart';
+export 'src/widgets/list_section.dart';
 export 'src/widgets/page_header.dart';
 export 'src/widgets/markdown.dart';
 export 'src/widgets/menu_bar.dart';
